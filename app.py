@@ -1,6 +1,8 @@
 from flask import Flask, request, jsonify
 from flask_login import LoginManager, login_user, current_user, login_required, logout_user
 import bcrypt
+
+from models.meal import Meal
 from models.user import User
 from database import db
 
@@ -51,9 +53,25 @@ def create_user():
         user = User(username=username, password=hashed_password, role='user')
         db.session.add(user)
         db.session.commit()
-        return jsonify({"message": "Usuario cadastrado com sucesso"})
+        return jsonify({"message": "Usuário cadastrado com sucesso"})
 
-    return jsonify({"message": "Dados invalidos"}), 400
+    return jsonify({"message": "Dados inválidos"}), 400
+
+@app.route('/meal', methods=["POST"])
+@login_required
+def create_meal():
+    data = request.json
+    name = data.get("name")
+    description = data.get("description")
+    is_on_diet = data.get("is_on_diet")
+
+    if name and description and is_on_diet is not None:
+        meal = Meal(name=name, description=description, is_on_diet=is_on_diet, user_id=current_user.id)
+        db.session.add(meal)
+        db.session.commit()
+        return jsonify({"message": "Receita cadastrada com sucesso"}), 201
+
+    return jsonify({"message": "Dados inválidos"}), 400
 
 if __name__ == '__main__':
     app.run(debug=True)
