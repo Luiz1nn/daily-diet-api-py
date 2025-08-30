@@ -1,6 +1,6 @@
 ### Regras da aplicação
 
-- [ ] Deve ser possível registrar uma refeição feita, com as seguintes informações:
+- [X] Deve ser possível registrar uma refeição feita, com as seguintes informações:
     - Nome
     - Descrição
     - Data e Hora
