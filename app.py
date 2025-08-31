@@ -69,9 +69,31 @@ def create_meal():
         meal = Meal(name=name, description=description, is_on_diet=is_on_diet, user_id=current_user.id)
         db.session.add(meal)
         db.session.commit()
-        return jsonify({"message": "Receita cadastrada com sucesso"}), 201
+        return jsonify({"message": "Refeição cadastrada com sucesso"}), 201
 
     return jsonify({"message": "Dados inválidos"}), 400
+
+@app.route('/meal/<int:id_meal>', methods=["PUT"])
+@login_required
+def update_meal(id_meal):
+    data = request.json
+    meal: Meal | None = Meal.query.get(id_meal)
+    name = data.get("name")
+    description = data.get("description")
+    is_on_diet = data.get("is_on_diet")
+
+    if meal.user_id != current_user.id:
+        return jsonify({"message": "Operação não permitida"}), 403
+
+    if meal and name and description and is_on_diet is not None:
+        meal.name = name
+        meal.description = description
+        meal.is_on_diet = is_on_diet
+        db.session.commit()
+
+        return jsonify({"message": f"Refeição {id_meal} atualizada com sucesso"})
+
+    return jsonify({"message": "Refeição não encontrado"}), 404
 
 if __name__ == '__main__':
     app.run(debug=True)
