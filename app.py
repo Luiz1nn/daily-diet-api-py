@@ -80,6 +80,16 @@ def get_meals():
     meals_list = [meal.to_dict() for meal in meals]
     return jsonify({ "meals": meals_list }), 200
 
+@app.route('/meal/<int:id_meal>', methods=["GET"])
+@login_required
+def get_meal(id_meal):
+    meal = Meal.query.get(id_meal)
+
+    if meal:
+        return jsonify(meal.to_dict()), 200
+
+    return jsonify({"message": "Usuario não encontrado"}), 404
+
 @app.route('/meal/<int:id_meal>', methods=["PUT"])
 @login_required
 def update_meal(id_meal):
