@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify
 from flask_login import LoginManager, login_user, current_user, login_required, logout_user
 import bcrypt
-
+import json
 from models.meal import Meal
 from models.user import User
 from database import db
@@ -72,6 +72,13 @@ def create_meal():
         return jsonify({"message": "Refeição cadastrada com sucesso"}), 201
 
     return jsonify({"message": "Dados inválidos"}), 400
+
+@app.route('/meal', methods=["GET"])
+@login_required
+def get_meals():
+    meals = Meal.query.filter_by(user_id=current_user.id).all()
+    meals_list = [meal.to_dict() for meal in meals]
+    return jsonify({ "meals": meals_list }), 200
 
 @app.route('/meal/<int:id_meal>', methods=["PUT"])
 @login_required

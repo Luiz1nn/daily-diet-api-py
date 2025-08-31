@@ -8,3 +8,13 @@ class Meal(db.Model):
     description = db.Column(db.String(255), nullable=False)
     is_on_diet = db.Column(db.Boolean, nullable=False, default=False)
     date_created = db.Column(db.DateTime, default=db.func.current_timestamp())
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "user_id": self.user_id,
+            "name": self.name,
+            "description": self.description,
+            "is_on_diet": self.is_on_diet,
+            "date_created": self.date_created.isoformat()
+        }
